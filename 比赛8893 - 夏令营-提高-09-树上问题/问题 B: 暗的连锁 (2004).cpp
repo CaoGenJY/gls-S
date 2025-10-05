@@ -1,9 +1,27 @@
 #include<bits/stdc++.h>
+#define ll long long
 using namespace std;
+inline ll read()
+{
+    char c=getchar(); int x=0,f=1;
+    while(c<48){if(c=='-')f=-1;c=getchar();}
+    while(c>47)x=(x*10)+(c^48),c=getchar();
+    return x*f;
+}
+inline void mwrite(ll a)
+{
+    if(a>9)mwrite(a/10);
+    putchar((a%10)|48);
+}
+inline void write(int a,char c)
+{
+	mwrite(a<0?(putchar('-'),a=-a):a);
+	putchar(c);
+}
 const int maxn=1e5+5;
-vector<int> to[maxn],to2[maxn];
+vector<int> to[maxn];
 int n,m;
-int anc[maxn][20],d[maxn];
+int anc[maxn][20],d[maxn],sum[maxn];
 void dfs(int u,int fa)
 {
     for(int i=0;i<to[u].size();i++)
@@ -36,33 +54,52 @@ int lca(int u,int v)
     }
     return anc[u][0];
 }
+void dfs2(int u,int fa)
+{
+    for(int i=0;i<to[u].size();i++)
+    {
+        int v=to[u][i];
+        if(v==fa) continue;
+        dfs2(v,u);
+        sum[u]+=sum[v];
+    }
+}
 int main()
 {
     cin>>n>>m;
-    for(int i=1;i<=n;i++)
+    for(int i=1;i<n;i++)
     {
         int u,v;
         cin>>u>>v;
         to[u].push_back(v);
         to[v].push_back(u);
     }
+    dfs(1,0);init();
     for(int i=1;i<=m;i++)
     {
         int u,v;
         cin>>u>>v;
-        to2[u].push_back(v);
-        to2[v].push_back(u);
-        
+        int l=lca(u,v);
+        sum[u]++;sum[v]++;
+        sum[anc[l][0]]-=2;
     }
-
+    dfs2(1,0);
+    ll ans=0;
+    for(int i=2;i<=n;i++)
+    {
+        if(!sum[i]) ans+=m;
+        else if(sum[i]==1) ans++;
+    }
+    write(ans,'\n');
+    return 0;
 }
 /************************************************
   _____              _____             
  / ____|            / ____|            
-| |     __ _  __ _ | |  __  ___  _ __  
-| |    / _` |/ _` || | |_ |/ _ \| '_ \ 
-| |___| (_| | (_| || |__| | (_) | | | |   Coding
- \_____\__,_|\__, | \_____|\___/|_| |_|
+| |     ____  ____ | |  __  ___   ____  
+| |    / _  |/ _  || | |_ |/ _ \ |  _ \ 
+| |___| (_| | (_| || |__| | (_)  | | | |   Coding
+ \_____\____|\___ | \_____|\___/ |_| |_|
               __/ |                    
              |___/                     
 ************************************************/
