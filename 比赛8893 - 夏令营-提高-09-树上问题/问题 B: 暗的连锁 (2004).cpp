@@ -81,7 +81,7 @@ int main()
         cin>>u>>v;
         int l=lca(u,v);
         sum[u]++;sum[v]++;
-        sum[anc[l][0]]-=2;
+        sum[l]-=2;
     }
     dfs2(1,0);
     ll ans=0;
